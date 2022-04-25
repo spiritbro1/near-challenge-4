@@ -289,7 +289,7 @@ const data=await this.selector
                       methodName: "addMessage",
                       args: { text: this.message,date:Date.now().toString() },
                       gas: 300000000000000,
-                      deposit: Number(this.donate>0)?utils.format.parseNearAmount(this.donate.toString()):null,
+                      deposit: Number(this.donate>0)?utils.format.parseNearAmount(this.donate.toString()):0,
                     },
                   },
                 ],
