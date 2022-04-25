@@ -11,8 +11,8 @@
               fluid
              rounded="circle"
               width="200"
-              height="200"
-              :src="pfp"
+          
+              :src="`/api/hello?url=${pfp}`"
               alt="Image 1"
             ></b-img>
           </div>
@@ -41,7 +41,7 @@
     
       <template #aside>
         <b-img thumbnail
-             rounded="circle" :src="i.image" :blank="!i.image || i.image.trim().length === 0 || i.image.indexOf('ipfs') === -1" blank-color="#abc" width="64" alt="placeholder"></b-img>
+             rounded="circle" :src="`/api/hello2?url=${i.image}`" :blank="!i.image || i.image.trim().length === 0 || i.image.indexOf('ipfs') === -1" blank-color="#abc" width="64" alt="placeholder"></b-img>
       </template>
       <h5 class="mt-0 mb-1">{{i.sender}}</h5>
       <p class="mb-0">
