@@ -1,48 +1,69 @@
-# baza-interface
+# near challenge 4
 
-It's a light client to run your NFT marketplace based on Bazarion Protocol.
+## Features
 
-## Setup
+- [X] Sending message to smart contract
+- [X] Set profile picture through cross contract call
+- [X] Sending donation to smart contract
+- [X] Claim back the donation
 
-Clone this source code. Then downloading dependencies.
-```
-npm install
-```
+## Website
 
-## Configuration
-Updating your market information (`ft`, `nft`) in the config file `src/config.js`.
+https://near-message.vercel.app
 
-- `ft`: ERC20 token address
-- `nft`: NFT token address
+## Demo
 
-Note: Before updating the file, you have to list your market in [Bazarion](https://app.bazarion.org).
+https://twitter.com/spiritbrother/status/1518406642781782018
 
+## How to deploy contract
 
-For example, with the config file below:
-```
-cat src/config.js 
-const config = {
-    apiBaseUrl: 'https://app.bazarion.org/',
-    ft: 'TOMO',
-    nft: '0xf697F0fe68f9D1e5AdcaDF723b232eBd601e59b0',
-    chainId: 88
-}
+In this contract i implement experimental feature to set profile picture from your nft contract, the nft contract should have NEP-171 standard or else it will fail you can set your own contract in [here](https://github.com/spiritbro1/near-challenge-4/blob/main/assembly/main.ts#L59) change the `dev-1650673472567-94467512871134` to your own contract name and it's a cross contract call and it is expensive to call it i use approximately 60 Tgas for one transaction so be careful, to deploy first you need to build:
+
+```bash
+yarn build:contract:debug
 ```
 
-We have TomoPunks market: [https://tomopunks.bazarion.org](https://tomopunks.bazarion.org)
+Deploy to testnet:
 
-
-### Development
-```
-npm run serve
+```bash
+near dev-deploy --wasmFile=./out/main.wasm
 ```
 
-### Production
-```
-npm run build
+## Development
+
+Run this first:
+
+```bash
+yarn
 ```
 
-### Customization
-You can build your own UI by updating CSS, HTML.
+Create and set `.env` environment variables to be like this:
 
-Or you only update logo `src/assets/logo.png`.
+```
+VUE_APP_CONTRACT=// your message contract
+VUE_APP_NFT_CONTRACT=// your nft contract for cross chain call
+```
+
+Then to run this we need to deploy first to vercel dont worry it wont break anything run this command:
+
+```
+vercel .
+```
+
+Then to run this to develop:
+
+```
+vercel dev
+```
+
+## Deploy to production
+
+Set environment variable of your app that you just deploy like this:
+
+![image](https://user-images.githubusercontent.com/62529025/165008510-5a1c9004-6929-4b82-b5d2-1a6184f9b8a8.png)
+
+Its value are the same as in your development env, then after finish setting up deploy using this command:
+
+```
+vercel --prod
+```
