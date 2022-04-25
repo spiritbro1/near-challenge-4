@@ -146,7 +146,13 @@ const data=await this.selector
                   },
                 ],
               });
-              if(data.transaction_outcome){
+              if(localStorage.getItem("near-wallet-selector:selectedWalletId")==='"near-wallet"'){
+this.$bvToast.show('tx-success1');
+                this.transactionId="";
+                        this.cokim.hide('your-nft')
+                        this.getPFP(this.nftAddress)
+                        this.getMessages()
+              }else if(data?.transaction_outcome){
                 this.$bvToast.show('tx-success1');
                 this.transactionId=data.transaction_outcome.id;
                         this.cokim.hide('your-nft')

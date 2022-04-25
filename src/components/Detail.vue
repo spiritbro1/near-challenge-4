@@ -294,7 +294,17 @@ const data=await this.selector
                   },
                 ],
               });
-              if(data.transaction_outcome){
+              if(localStorage.getItem("near-wallet-selector:selectedWalletId")==='"near-wallet"'){
+this.$bvToast.show('tx-success');
+                this.transactionId="";
+                this.message="";
+                this.donate=0;
+                this.$bvModal.hide('send-message')
+                  this.getMessages()
+                  this.getDeposit()
+                   const self=this;
+                  setTimeout(()=>self.$emit("refresh"),1000)
+              }else if(data?.transaction_outcome){
                 this.$bvToast.show('tx-success');
                 this.transactionId=data.transaction_outcome.id;
                 this.message="";
@@ -334,8 +344,14 @@ const data=await this.selector
                   },
                 ],
               });
-        
-              if(data.transaction.hash){
+        if(localStorage.getItem("near-wallet-selector:selectedWalletId")==='"near-wallet"'){
+this.$bvToast.show('tx-success');
+                this.transactionId="";
+                    this.getMessages()
+                  this.getDeposit()
+                  const self=this;
+                  setTimeout(()=>self.$emit("refresh"),1000)
+        }else if(data.transaction.hash){
               
                 this.$bvToast.show('tx-success');
                 this.transactionId=data.transaction.hash;
