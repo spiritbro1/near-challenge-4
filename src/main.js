@@ -9,7 +9,7 @@ import utils from './utils'
 import { ethers } from 'ethers'
 import { constants } from '@bazarion/sdk'
 import stores from './stores'
-import config from './config'
+import config from './dconfig'
 
 const NETWORKS = constants.NETWORKS
 
@@ -29,8 +29,13 @@ const router = new VueRouter({
 })
 
 stores.updateTokens()
+;
+
 
 router.beforeEach(async (to, from, next) => {
+  
+       
+    
     let reqChainId = getMarketConfig().chainId
     let network = NETWORKS.find(n => (n.chainId === '0x' + reqChainId.toString(16))) || []
     let provider = {}
@@ -48,6 +53,7 @@ router.beforeEach(async (to, from, next) => {
     }
     Vue.prototype.provider = provider
     Vue.prototype.network = network
+    
     next()
 })
 
@@ -80,6 +86,7 @@ Vue.prototype.utils = utils
 Vue.prototype.constants = constants
 
 new Vue({
+    
     render: h => h(App),
     router: router
 }).$mount('#app')

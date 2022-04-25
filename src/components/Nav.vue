@@ -7,10 +7,10 @@
                 <b-navbar-nav class="ml-auto">
                     <b-nav-item class="w-nav multi-network" right>
                         <b-card-img class="mr-1" style="width: 22px;" :src="logoURI || require('../assets/images/nologo.svg')" alt="Image"></b-card-img>
-                        <span class="network-name">{{ networkName }}</span>
+                        <span class="network-name">NEAR Testnet</span>
                     </b-nav-item>
                     <b-nav-item class="w-nav native-balance" right v-if="!isConnect && account">                        
-                        {{ utils.bigToCommon(balance, 18) }} {{ symbol }}
+                        {{ balance/10**24 }} NEAR 
                     </b-nav-item>
                     
                     <b-nav-item class="w-nav address" right v-if="!isConnect && account">
@@ -19,24 +19,17 @@
                             :diameter="20"
                             class="w-icon"
                             />
-                       {{ utils.truncate(account, 11) }}
+                       {{ account }}
                     </b-nav-item>
-                    <b-nav-item-dropdown right v-if="!isConnect && account" class="nav-more w-nav">
-                        <template #text>
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" class="sc-hqyNC gQPoVR"><path d="M12 13C12.5523 13 13 12.5523 13 12C13 11.4477 12.5523 11 12 11C11.4477 11 11 11.4477 11 12C11 12.5523 11.4477 13 12 13Z" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path><path d="M19 13C19.5523 13 20 12.5523 20 12C20 11.4477 19.5523 11 19 11C18.4477 11 18 11.4477 18 12C18 12.5523 18.4477 13 19 13Z" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path><path d="M5 13C5.55228 13 6 12.5523 6 12C6 11.4477 5.55228 11 5 11C4.44772 11 4 11.4477 4 12C4 12.5523 4.44772 13 5 13Z" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
-                        </template>
-                        <b-dropdown-item :href="`/docs`">
-                            Document
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.6"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
-                        </b-dropdown-item>
-                    </b-nav-item-dropdown>
+                
                     
-                    <b-button v-if="isConnect" size="sm" class="w-button btn-wallet-connect" @click="connect()" right>
+                    <b-button v-if="isConnect" size="sm" class="w-button btn-wallet-connect" @click="selector.show()" right>
                         <svg width="18" height="18" viewBox="0 0 20 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M0 6H19C19.2652 6 19.5196 6.10536 19.7071 6.29289C19.8946 6.48043 20 6.73478 20 7V17C20 17.2652 19.8946 17.5196 19.7071 17.7071C19.5196 17.8946 19.2652 18 19 18H1C0.734784 18 0.48043 17.8946 0.292893 17.7071C0.105357 17.5196 0 17.2652 0 17V6ZM1 0H16V4H0V1C0 0.734784 0.105357 0.48043 0.292893 0.292893C0.48043 0.105357 0.734784 0 1 0ZM13 11V13H16V11H13Z" fill="#fff"/>
                         </svg>
                         Connect to a wallet
                     </b-button>
+                    <b-button v-if="!isConnect" class="w-button btn-wallet-connect2" variant="danger" @click="selector.signOut()">Log out</b-button>
                 </b-navbar-nav>
             <!-- </b-collapse> -->
         </b-navbar>
@@ -63,11 +56,11 @@
 
 import { ethers } from 'ethers'
 import { constants } from '@bazarion/sdk'
-import EventBus from '../eventBus'
 
 const NETWORKS = constants.NETWORKS
-
+// import * as nearAPI from 'near-api-js';
 export default {
+   props:["selector"],
     data: () => ({
         chainName: NETWORKS[0].chainName,
         networks: NETWORKS.filter(n => (n.isSupported)),
@@ -75,79 +68,74 @@ export default {
         networkName: '',
         symbol: '',
         balance: ethers.BigNumber.from(0),
-        isConnect: false,
+        isConnect: true,
         logoURI: ''
     }),
+      destroyed(){
+    this?.selector?.off("signIn",()=>{})
+    this?.selector?.off("signOut",()=>{})
+  },
     created: async function () {
-        EventBus.$on('connect', () => this.connect())
-        let provider = (window.ethereum)
-            ? new ethers.providers.Web3Provider(window.ethereum, 'any') : this.provider
-        this.isConnect = (provider.connection.url !== 'metamask')
-        if (provider && typeof provider.getSigner === 'function') {
-            this.chainName = this.network.chainName
-            let self = this
-            provider.getSigner().getAddress().then(async account => {
-                self.account = account
-                self.isConnect = self.isConnect || false
-                self.balance = (await provider.getSigner().getBalance())
-                let chainId = (await provider.getNetwork()).chainId
-                const network = NETWORKS.find(n => (n.chainId === '0x' + chainId.toString(16)))
-
-                if (!network
-                    || !network.isSupported || chainId !== self.chainId) {
-                    self.$bvToast.show('invalid-network')
+     
+const self=this;
+if(this.selector.isSignedIn()){
+   this.isConnect=false;
+   const account=await this.selector.getAccounts();
+   this.account=account[0].accountId;
+ const body = {
+                jsonrpc: '2.0',
+                id: "dontcare",
+                method: "query",
+                params: {
+                    request_type: "view_account",
+                    finality: "final",
+                    account_id: this.account
                 }
+            };
 
-                self.networkName = (network) ? network.chainName : 'Unknown'
-                self.logoURI = (network) ? network.logoURI : ''
-                self.symbol = (network) ? network.nativeCurrency.symbol : ''
-
-            }).catch(() => {
-                self.isConnect = true
+          const res=await fetch(this.selector.network.nodeUrl, {
+                method: 'post',
+                body: JSON.stringify(body),
+                headers: {'Content-Type': 'application/json'}
             })
-
-        } else {
-            this.$bvToast.show('invalid-network')
-        }
+            const data=await res.json();
+   this.balance=data.result.amount;
+   console.log(data.result.amount)
+ } 
+this.selector.on("signIn",async () => {
+    self.$emit("waku")
+ if(self.selector.isSignedIn()){
+   self.isConnect=false;
+   const account=await self.selector.getAccounts();
+   self.account=account[0].accountId;
+    const body = {
+                jsonrpc: '2.0',
+                id: "dontcare",
+                method: "query",
+                params: {
+                    request_type: "view_account",
+                    finality: "final",
+                    account_id: self.account
+                }
+            };
+   const res=await fetch(self.selector.network.nodeUrl, {
+                method: 'post',
+                body: JSON.stringify(body),
+                headers: {'Content-Type': 'application/json'}
+            })
+            const data=await res.json();
+   self.balance=data.result.amount;
+ } 
+});
+this.selector.on("signOut", () => {
+    self.$emit("waku")
+if(!self.selector.isSignedIn()){
+   self.isConnect=true;
+ } 
+});
     },
     methods: {
-        async connect () {
-            if (!window.ethereum) {
-                this.$bvToast.show('required-metamask')
-            }
-            const provider = new ethers.providers.Web3Provider(window.ethereum, 'any')
-            let network = NETWORKS.find(n => (n.chainId === '0x' + this.chainId.toString(16)))
-            network = network || NETWORKS[0]
-            await provider.send(
-                'wallet_addEthereumChain', [ {
-                    chainId: network.chainId,
-                    chainName: network.chainName,
-                    nativeCurrency: network.nativeCurrency,
-                    rpcUrls: network.rpcUrls
-                } ]
-            )
-            await provider.send('eth_requestAccounts', [])
-            this.$bvToast.hide('invalid-network')
-            EventBus.$off('connect')
-        },
-        async switchNetwork (chainId) {
-            if (!window.ethereum) {
-                this.$bvToast.show('required-metamask')
-            }
-            const provider = new ethers.providers.Web3Provider(window.ethereum, 'any')
-            let network = NETWORKS.find(n => (n.chainId === '0x' + chainId.toString(16)))
-            network = network || NETWORKS[0]
-            await provider.send(
-                'wallet_addEthereumChain', [ {
-                    chainId: network.chainId,
-                    chainName: network.chainName,
-                    nativeCurrency: network.nativeCurrency,
-                    rpcUrls: network.rpcUrls
-                } ]
-            )
-            await provider.send('eth_requestAccounts', [])
-            this.$router.push(`/${chainId}`)
-        }        
+              
     }
 }
 </script>
@@ -220,18 +208,33 @@ export default {
         }        
     }
     .w-button.btn-wallet-connect{
-        background: #DE350B;
+        background: #0c0c0c;
         padding-top:10px;
         padding-bottom: 10px;
         border: none;
         border-radius: 8px;
         color: #fff;
         &:hover{
-            background-color: #e53b11;
+            background-color: #645f5d;
         }
         &:focus{
             box-shadow: none;
-            background-color: #e53b11;
+            background-color: #645f5d;
+        }
+    }
+    .w-button.btn-wallet-connect2{
+        background: #e70e0e;
+        padding-top:10px;
+        padding-bottom: 10px;
+        border: none;
+        border-radius: 8px;
+        color: #fff;
+        &:hover{
+            background-color: #f34804;
+        }
+        &:focus{
+            box-shadow: none;
+            background-color: #f34804;
         }
     }
     .w-nav{

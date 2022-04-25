@@ -8,14 +8,19 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:contract:debug": "asb --target debug"
   },
   "main": "index.js",
   "dependencies": {
     "@bazarion/sdk": "^1.1.1",
+    "@near-wallet-selector/core": "^3.0.2",
+    "@near-wallet-selector/near-wallet": "^3.0.2",
+    "@near-wallet-selector/sender": "^3.0.2",
     "axios": "^0.21.3",
     "core-js": "^3.6.5",
     "ethers": "^5.4.5",
+    "near-api-js": "^0.44.2",
     "store": "^2.0.12",
     "url-join": "^4.0.1",
     "vue": "^2.6.14",
@@ -33,6 +38,7 @@
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",
     "frontmatter-markdown-loader": "^3.6.3",
+    "near-sdk-as": "^3.2.3",
     "popper.js": "^1.16.1",
     "portal-vue": "^2.1.7",
     "sass": "^1.43.2",

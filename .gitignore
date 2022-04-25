@@ -3,7 +3,7 @@ node_modules
 /dist
 /public/images/apes
 /public/data
-
+/out
 
 # local env files
 .env.local
@@ -23,3 +23,5 @@ pnpm-debug.log*
 *.njsproj
 *.sln
 *.sw?
+
+.vercel
