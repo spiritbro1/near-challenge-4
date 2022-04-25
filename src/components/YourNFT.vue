@@ -86,7 +86,7 @@ export default {
         iNFT: 0,
         disabled:false
     }),
-    props: ['ftLink', 'nftAddress', 'ftSymbol', 'nftSymbol','pfp','cokim','getPFP','selector'],
+    props: ['getMessages','ftLink', 'nftAddress', 'ftSymbol', 'nftSymbol','pfp','cokim','getPFP','selector'],
     updated: async function () {
         this.$nextTick().then(() => { 
             let nftImg = document.querySelector(".nft-image")
@@ -151,14 +151,17 @@ const data=await this.selector
                 this.transactionId=data.transaction_outcome.id;
                         this.cokim.hide('your-nft')
                         this.getPFP(this.nftAddress)
+                        this.getMessages()
         
               } else{
                 this.$bvToast.show('tx-error1');
                 this.errorMessage="can't set pfp";
+                 this.disabled=false;
               }
      }catch(e){
 this.$bvToast.show('tx-error1');
                 this.errorMessage=e.message;
+                 this.disabled=false;
      }
      this.disabled=false;
        }

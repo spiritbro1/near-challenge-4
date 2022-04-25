@@ -82,7 +82,7 @@
       hide-footer
       title="Your NFTs"
     >
-    <YourNFT :pfp="pfp" :nftAddress="account" :cokim="$bvModal" :selector="selector" :getPFP="getPFP" />
+    <YourNFT :getMessages="getMessages" :pfp="pfp" :nftAddress="account" :cokim="$bvModal" :selector="selector" :getPFP="getPFP" />
     </b-modal>
     <b-modal
       id="send-message"
@@ -306,10 +306,12 @@ const data=await this.selector
               } else{
                 this.$bvToast.show('tx-error');
                 this.errorMessage="can't send message";
+                 this.disabled=false;
               }
      }catch(e){
 this.$bvToast.show('tx-error');
                 this.errorMessage=e.message;
+                 this.disabled=false;
      }
      this.disabled=false
    },
@@ -344,10 +346,12 @@ const data=await this.selector
               } else{
                 this.$bvToast.show('tx-error');
                 this.errorMessage="can't send message";
+                 this.disabled=false;
               }
      }catch(e){
 this.$bvToast.show('tx-error');
                 this.errorMessage=e.message;
+                 this.disabled=false;
      }
      this.disabled=false
    }
