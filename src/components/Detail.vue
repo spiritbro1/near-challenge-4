@@ -82,7 +82,7 @@
       hide-footer
       title="Your NFTs"
     >
-    <YourNFT :pfp="pfp" :nftAddress="account" :cokim="$bvModal" :getPFP="getPFP" />
+    <YourNFT :pfp="pfp" :nftAddress="account" :cokim="$bvModal" :selector="selector" :getPFP="getPFP" />
     </b-modal>
     <b-modal
       id="send-message"

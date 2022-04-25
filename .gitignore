@@ -4,6 +4,7 @@ node_modules
 /public/images/apes
 /public/data
 /out
+.env
 
 # local env files
 .env.local

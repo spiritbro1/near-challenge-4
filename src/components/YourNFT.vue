@@ -86,7 +86,7 @@ export default {
         iNFT: 0,
         disabled:false
     }),
-    props: ['ftLink', 'nftAddress', 'ftSymbol', 'nftSymbol','pfp','cokim','getPFP'],
+    props: ['ftLink', 'nftAddress', 'ftSymbol', 'nftSymbol','pfp','cokim','getPFP','selector'],
     updated: async function () {
         this.$nextTick().then(() => { 
             let nftImg = document.querySelector(".nft-image")
