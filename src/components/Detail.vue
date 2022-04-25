@@ -8,6 +8,7 @@
             <b-img
             :blank="pfp.trim().length === 0 || pfp.indexOf('ipfs') === -1" blank-color="#bac"
               thumbnail
+              fluid
              rounded="circle"
               width="200"
               height="200"
